@@ -1,60 +1,46 @@
-document.querySelectorAll('.add-btn').forEach(button => {
-    button.addEventListener('click', () => {
-        const quantityElement = button.nextElementSibling;
-        let quantity = parseInt(quantityElement.textContent, 10);
-        if (!isNaN(quantity)) {
-            quantity++;
-            quantityElement.textContent = quantity;
-            updateTotal();
-        }
-    });
-});
+var Plus = document.getElementsByClassName('fa-plus-circle');
+var Minus = document.getElementsByClassName('fa-minus-circle');
+var quantities = document.getElementsByClassName('quantity');
 
-document.querySelectorAll('.subtract-btn').forEach(button => {
-    button.addEventListener('click', () => {
-        const quantityElement = button.previousElementSibling;
-        let quantity = parseInt(quantityElement.textContent, 10);
-        if (!isNaN(quantity) && quantity > 0) {
-            quantity--;
-            quantityElement.textContent = quantity;
-            updateTotal();
-        }
-    });
-});
+for (let i = 0; i < Plus.length; i++) {
+    Plus[i].addEventListener('click', function() {
 
-document.querySelectorAll('.delete-btn').forEach(button => {
-    button.addEventListener('click', () => {
-        const productElement = button.closest('.product');
-        if (productElement) {
-            productElement.remove();
-            updateTotal();
-        }
-    });
-});
+        let quantity = quantities[i];
+        let cpt = parseInt(quantity.innerText);
 
-document.querySelectorAll('.favorite-btn').forEach(button => {
-    button.addEventListener('click', () => {
-        button.classList.toggle('favorited');
-        // Exemple de gestion des favoris avec localStorage
-        const productId = button.dataset.productId; // Supposons que chaque bouton a un attribut data-product-id
-        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        if (button.classList.contains('favorited')) {
-            favorites.push(productId);
-        } else {
-            favorites = favorites.filter(id => id !== productId);
-        }
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-    });
-});
 
-function updateTotal() {
-    let total = 0;
-    document.querySelectorAll('.product').forEach(product => {
-        const price = parseFloat(product.querySelector('.price').textContent.replace('$', ''));
-        const quantity = parseInt(product.querySelector('.quantity').textContent, 10);
-        if (!isNaN(price) && !isNaN(quantity)) {
-            total += price * quantity;
-        }
+        cpt = cpt + 1;
+        quantity.innerText = cpt;
+
+
+        updateTotalPrice();
     });
-    document.getElementById('total').textContent = total.toFixed(2);
+
+    Minus[i].addEventListener('click', function() {
+
+        let quantity = quantities[i];
+        let cpt = parseInt(quantity.innerText);
+
+
+        if (cpt > 0) {
+            cpt = cpt - 1;
+            quantity.innerText = cpt;
+        }
+
+
+        updateTotalPrice();
+    });
+}
+
+function updateTotalPrice() {
+    var total = 0;
+    var unitPrices = document.getElementsByClassName('unit-price');
+
+    for (let i = 0; i < quantities.length; i++) {
+        let quantity = parseInt(quantities[i].innerText);
+        let unitPrice = parseInt(unitPrices[i].innerText.replace(' $', ''));
+        total += quantity * unitPrice;
+    }
+
+    document.querySelector('.total').innerText = total + ' $';
 }
